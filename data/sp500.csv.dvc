@@ -1,0 +1,5 @@
+outs:
+- md5: 16b2a166ae64466c4d2732001a2fffce
+  size: 305513
+  hash: md5
+  path: sp500.csv
