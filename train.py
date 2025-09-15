@@ -1,17 +1,96 @@
-import json, joblib, pandas as pd
-from sklearn.linear_model import LinearRegression
+import pandas as pd
+import numpy as np
+import pickle
+import json
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_absolute_error
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_absolute_error, mean_squared_error
 
-df = pd.read_csv("data/trips.csv")
-X = df[["km","minutes","tempC"]]; y = df["price"]
-Xtr, Xva, ytr, yva = train_test_split(X, y, test_size=0.4, random_state=42)
+# Load dataset
+df = pd.read_csv("data/sp500.csv")
 
-m = LinearRegression().fit(Xtr, ytr)
-mae = float(mean_absolute_error(yva, m.predict(Xva)))
+# Ensure Price column is numeric (remove commas if present)
+df["Price"] = pd.to_numeric(df["Price"].astype(str).str.replace(",", "", regex=True))
 
-joblib.dump(m, "model.pkl")
+# Target (y) and features (X = just an index timeline here)
+y = df["Price"].values
+X = np.arange(len(y)).reshape(-1, 1)
+
+# Split data (train = older data, test = newer data)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
+
+# Polynomial regression
+degree = 3
+poly = PolynomialFeatures(degree=degree)
+X_train_poly = poly.fit_transform(X_train)
+X_test_poly = poly.transform(X_test)
+
+model = LinearRegression()
+model.fit(X_train_poly, y_train)
+
+# Predict
+y_pred = model.predict(X_test_poly)
+
+# Save model
+with open("model.pkl", "wb") as f:
+    pickle.dump((model, poly), f)
+
+# Save metrics
+metrics = {
+    "MAE": float(mean_absolute_error(y_test, y_pred)),
+    "RMSE": float(np.sqrt(mean_squared_error(y_test, y_pred))),
+    "degree": degree
+}
 with open("metrics.json", "w") as f:
-    json.dump({"val_mae": mae}, f, indent=2)
+    json.dump(metrics, f, indent=4)
 
-print(f"Trained. VAL_MAE={mae:.2f}")
+print("✅ Training complete. Metrics saved to metrics.json")
+import pandas as pd
+import numpy as np
+import pickle
+import json
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_absolute_error, mean_squared_error
+
+# Load dataset
+df = pd.read_csv("data/sp500.csv")
+
+# Ensure Price column is numeric (remove commas if present)
+df["Price"] = pd.to_numeric(df["Price"].astype(str).str.replace(",", "", regex=True))
+
+# Target (y) and features (X = just an index timeline here)
+y = df["Price"].values
+X = np.arange(len(y)).reshape(-1, 1)
+
+# Split data (train = older data, test = newer data)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
+
+# Polynomial regression
+degree = 3
+poly = PolynomialFeatures(degree=degree)
+X_train_poly = poly.fit_transform(X_train)
+X_test_poly = poly.transform(X_test)
+
+model = LinearRegression()
+model.fit(X_train_poly, y_train)
+
+# Predict
+y_pred = model.predict(X_test_poly)
+
+# Save model
+with open("model.pkl", "wb") as f:
+    pickle.dump((model, poly), f)
+
+# Save metrics
+metrics = {
+    "MAE": float(mean_absolute_error(y_test, y_pred)),
+    "RMSE": float(np.sqrt(mean_squared_error(y_test, y_pred))),
+    "degree": degree
+}
+with open("metrics.json", "w") as f:
+    json.dump(metrics, f, indent=4)
+
+print("✅ Training complete. Metrics saved to metrics.json")
