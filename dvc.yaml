@@ -2,7 +2,7 @@ stages:
   train:
     cmd: python train.py
     deps:
-    - data/trips.csv
+    - data/sp500.csv   
     - train.py
     outs:
     - model.pkl
