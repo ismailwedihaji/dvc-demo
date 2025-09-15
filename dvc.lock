@@ -5,8 +5,8 @@ stages:
     deps:
     - path: data/trips.csv
       hash: md5
-      md5: 5456f437bfb9c7e1e27c6322095ec08f
-      size: 85
+      md5: 1c24c2e964852bcb40bec3de9ce05814
+      size: 126
     - path: train.py
       hash: md5
       md5: 276b38bbb5daadaaef447c8dfa0b45c6
@@ -14,9 +14,9 @@ stages:
     outs:
     - path: metrics.json
       hash: md5
-      md5: 7b9ddcef63c2fc0a268bf03dee551c14
-      size: 35
+      md5: 4965d575e6e43ceb6af23329e656a53a
+      size: 34
     - path: model.pkl
       hash: md5
-      md5: cf95a604317152f79dd0e4410a18c30d
+      md5: 00703347409e949dc822bd9796e699aa
       size: 881
