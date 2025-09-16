@@ -25,13 +25,12 @@ jobs:
         pip install -r requirements.txt
         pip install dvc[gdrive] jq
 
-    # 🔑 Save service account JSON from secret
+    # 🔑 Save service account JSON from GitHub Secret
     - name: Setup Google Drive credentials
       run: |
         echo '${{ secrets.GDRIVE_CREDENTIALS }}' > gdrive-credentials.json
-        echo "GOOGLE_APPLICATION_CREDENTIALS=$PWD/gdrive-credentials.json" >> $GITHUB_ENV
         dvc remote modify gdrive gdrive_use_service_account true
-        dvc remote modify gdrive gdrive_service_account_json_file gdrive-credentials.json
+        dvc remote modify gdrive gdrive_service_account_json_path gdrive-credentials.json
         dvc remote modify gdrive gdrive_service_account_user_email dvc-ci@sunlit-hub-468915-a2.iam.gserviceaccount.com
 
     - name: Pull dataset from DVC remote
