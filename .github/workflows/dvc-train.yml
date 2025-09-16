@@ -23,18 +23,11 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
-        pip install dvc[gdrive] jq
+        pip install dvc jq
 
-    # 🔑 Save service account JSON from GitHub Secret
-    - name: Setup Google Drive credentials
-      run: |
-        echo '${{ secrets.GDRIVE_CREDENTIALS }}' > gdrive-credentials.json
-        dvc remote modify gdrive gdrive_use_service_account true
-        dvc remote modify gdrive gdrive_service_account_json_path gdrive-credentials.json
-        dvc remote modify gdrive gdrive_service_account_user_email dvc-ci@sunlit-hub-468915-a2.iam.gserviceaccount.com
-
+    # ⚡ Pull dataset from local DVC remote (./dvc-cache)
     - name: Pull dataset from DVC remote
-      run: dvc pull
+      run: dvc pull -r localremote
 
     - name: Reproduce pipeline
       run: dvc repro
@@ -57,7 +50,7 @@ jobs:
           git add model.pkl metrics.json dvc.lock
           git commit -m "Update model: MAE improved to $new_mae"
           git push
-          dvc push
+          dvc push -r localremote
         else
           echo "❌ No improvement, keeping old model."
         fi
