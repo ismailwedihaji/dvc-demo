@@ -57,12 +57,14 @@ jobs:
         echo "Old MAE: $old_mae, New MAE: $new_mae"
 
         if (( $(echo "$new_mae < $old_mae" | bc -l) )); then
-          echo "✅ Improvement found, committing new model..."
+          echo "✅ Improvement found, committing updated pipeline metadata..."
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add model.pkl metrics.json dvc.lock
-          git commit -m "Update model: MAE improved to $new_mae"
+          # only commit metadata, NOT model.pkl
+          git add metrics.json dvc.lock
+          git commit -m "Update pipeline: MAE improved to $new_mae"
           git push
+          # push the actual model.pkl + data to DVC remote
           dvc push -r localremote
         else
           echo "❌ No improvement, keeping old model."
