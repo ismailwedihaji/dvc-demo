@@ -28,8 +28,8 @@ jobs:
     # 🔑 Use service account credentials from secret
     - name: Setup Google Drive credentials
       run: |
-        echo "${{ secrets.GDRIVE_CREDENTIALS }}" > gdrive-credentials.json
-        dvc remote modify gdrive gdrive_service_account_json_file gdrive-credentials.json
+        echo '${{ secrets.GDRIVE_CREDENTIALS }}' > gdrive-credentials.json
+        dvc remote modify gdrive gdrive_service_account_json_path gdrive-credentials.json
 
     - name: Pull dataset from DVC remote
       run: dvc pull
