@@ -23,12 +23,12 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
-        pip install dvc[gdrive]
+        pip install dvc[gdrive] jq
 
     - name: Configure DVC remote
       run: |
-        dvc remote modify gdrive gdrive_client_id ${{ secrets.GDRIVE_CLIENT_ID }}
-        dvc remote modify gdrive gdrive_client_secret ${{ secrets.GDRIVE_CLIENT_SECRET }}
+        dvc remote modify gdrive gdrive_client_id "${{ secrets.GDRIVE_CLIENT_ID }}"
+        dvc remote modify gdrive gdrive_client_secret "${{ secrets.GDRIVE_CLIENT_SECRET }}"
 
     - name: Reproduce pipeline
       run: dvc repro
@@ -36,13 +36,13 @@ jobs:
     - name: Compare metrics
       run: |
         git show HEAD:metrics.json > old_metrics.json || echo "{}" > old_metrics.json
-        echo "Old metrics:"
-        cat old_metrics.json
-        echo "New metrics:"
-        cat metrics.json
+        echo "Old metrics:" && cat old_metrics.json
+        echo "New metrics:" && cat metrics.json
 
         old_mae=$(jq '.MAE' old_metrics.json)
         new_mae=$(jq '.MAE' metrics.json)
+
+        echo "Old MAE: $old_mae, New MAE: $new_mae"
 
         if (( $(echo "$new_mae < $old_mae" | bc -l) )); then
           echo "✅ Improvement found, committing new model..."
