@@ -45,4 +45,4 @@ metrics = {
 with open("metrics.json", "w") as f:
     json.dump(metrics, f, indent=4)
 
-print("✅ Training complete. Metrics saved to metrics.json")
+print(" Training complete. Metrics saved to metrics.json")
