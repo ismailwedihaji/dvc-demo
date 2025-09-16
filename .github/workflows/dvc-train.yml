@@ -25,10 +25,11 @@ jobs:
         pip install -r requirements.txt
         pip install dvc[gdrive] jq
 
-    - name: Configure DVC remote
+    # 🔑 Use service account credentials from secret
+    - name: Setup Google Drive credentials
       run: |
-        dvc remote modify gdrive gdrive_client_id "${{ secrets.GDRIVE_CLIENT_ID }}"
-        dvc remote modify gdrive gdrive_client_secret "${{ secrets.GDRIVE_CLIENT_SECRET }}"
+        echo "${{ secrets.GDRIVE_CREDENTIALS }}" > gdrive-credentials.json
+        dvc remote modify gdrive gdrive_service_account_json_file gdrive-credentials.json
 
     - name: Pull dataset from DVC remote
       run: dvc pull
