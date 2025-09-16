@@ -3,20 +3,20 @@ stages:
   train:
     cmd: python train.py
     deps:
-    - path: data/trips.csv
+    - path: data/sp500.csv
       hash: md5
-      md5: 1c24c2e964852bcb40bec3de9ce05814
-      size: 126
+      md5: 16b2a166ae64466c4d2732001a2fffce
+      size: 305513
     - path: train.py
       hash: md5
-      md5: 276b38bbb5daadaaef447c8dfa0b45c6
-      size: 588
+      md5: b168d376cd265395cc86b4841fe98572
+      size: 2808
     outs:
     - path: metrics.json
       hash: md5
-      md5: 4965d575e6e43ceb6af23329e656a53a
-      size: 34
+      md5: 0f4389b231f3136bca73ad56e769f642
+      size: 81
     - path: model.pkl
       hash: md5
-      md5: 00703347409e949dc822bd9796e699aa
-      size: 881
+      md5: 88e733649914c7533caffb6dd50b7f3e
+      size: 690
