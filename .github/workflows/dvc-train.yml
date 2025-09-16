@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - "train.py"
-      - "data/sp500.csv"
+      - "data/sp500.csv.dvc"
       - "dvc.yaml"
 
 jobs:
@@ -29,6 +29,9 @@ jobs:
       run: |
         dvc remote modify gdrive gdrive_client_id "${{ secrets.GDRIVE_CLIENT_ID }}"
         dvc remote modify gdrive gdrive_client_secret "${{ secrets.GDRIVE_CLIENT_SECRET }}"
+
+    - name: Pull dataset from DVC remote
+      run: dvc pull
 
     - name: Reproduce pipeline
       run: dvc repro
