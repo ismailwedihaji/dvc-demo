@@ -1,0 +1,4 @@
+pandas
+numpy
+scikit-learn
+dvc[gdrive]   # since you configured Google Drive as remote
