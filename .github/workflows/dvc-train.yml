@@ -25,7 +25,20 @@ jobs:
         pip install -r requirements.txt
         pip install dvc jq
 
-    # ⚡ Pull dataset from local DVC remote (./dvc-cache)
+    # Restore cached DVC data
+    - name: Restore DVC cache
+      uses: actions/cache@v3
+      with:
+        path: ./dvc-cache
+        key: dvc-cache-${{ github.sha }}
+        restore-keys: |
+          dvc-cache-
+
+    # Configure DVC to use local cache as remote
+    - name: Configure local DVC remote
+      run: |
+        dvc remote add -d localremote ./dvc-cache || true
+
     - name: Pull dataset from DVC remote
       run: dvc pull -r localremote
 
@@ -54,3 +67,10 @@ jobs:
         else
           echo "❌ No improvement, keeping old model."
         fi
+
+    # Save updated DVC cache back to GitHub cache
+    - name: Save DVC cache
+      uses: actions/cache@v3
+      with:
+        path: ./dvc-cache
+        key: dvc-cache-${{ github.sha }}
