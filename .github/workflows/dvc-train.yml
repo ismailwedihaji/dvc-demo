@@ -1,0 +1,53 @@
+name: DVC Training
+
+on:
+  push:
+    paths:
+      - "train.py"
+      - "data/sp500.csv"
+      - "dvc.yaml"
+
+jobs:
+  train:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.12"
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+        pip install dvc[s3]   # or dvc[gdrive] depending on your remote
+
+    - name: Reproduce pipeline
+      run: dvc repro
+
+    - name: Compare metrics
+      run: |
+        git show HEAD:metrics.json > old_metrics.json || echo "{}" > old_metrics.json
+        echo "Old metrics:"
+        cat old_metrics.json
+        echo "New metrics:"
+        cat metrics.json
+
+        old_mae=$(jq '.MAE' old_metrics.json)
+        new_mae=$(jq '.MAE' metrics.json)
+
+        echo "Old MAE: $old_mae, New MAE: $new_mae"
+        if (( $(echo "$new_mae < $old_mae" | bc -l) )); then
+          echo "✅ Improvement found, committing new model..."
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add model.pkl metrics.json dvc.lock
+          git commit -m "Update model: MAE improved to $new_mae"
+          git push
+          dvc push
+        else
+          echo "❌ No improvement, keeping old model."
+        fi
