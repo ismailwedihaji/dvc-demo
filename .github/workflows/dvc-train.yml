@@ -7,6 +7,9 @@ on:
       - "data/sp500.csv.dvc"
       - "dvc.yaml"
 
+permissions:
+  contents: write   # ✅ allow the GitHub Actions bot to push commits
+
 jobs:
   train:
     runs-on: ubuntu-latest
