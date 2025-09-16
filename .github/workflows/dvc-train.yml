@@ -8,7 +8,7 @@ on:
       - "dvc.yaml"
 
 permissions:
-  contents: write   # ✅ allow the GitHub Actions bot to push commits
+  contents: write   
 
 jobs:
   train:
