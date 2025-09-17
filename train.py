@@ -16,7 +16,7 @@ df["Price"] = pd.to_numeric(df["Price"].astype(str).str.replace(",", "", regex=T
 y = df["Price"].values
 X = np.arange(len(y)).reshape(-1, 1)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, shuffle=False)
 
 
 degree = 5
