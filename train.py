@@ -16,10 +16,10 @@ df["Price"] = pd.to_numeric(df["Price"].astype(str).str.replace(",", "", regex=T
 y = df["Price"].values
 X = np.arange(len(y)).reshape(-1, 1)
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, shuffle=False)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
 
 
-degree = 5
+degree = 4
 poly = PolynomialFeatures(degree=degree)
 X_train_poly = poly.fit_transform(X_train)
 X_test_poly = poly.transform(X_test)
