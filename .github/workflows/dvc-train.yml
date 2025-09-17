@@ -23,6 +23,15 @@ jobs:
       with:
         python-version: "3.12"
 
+    #  Cache pip dependencies
+    - name: Cache pip packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
@@ -37,7 +46,6 @@ jobs:
         restore-keys: |
           dvc-cache-
 
-    # Configure DVC to use local cache as remote
     - name: Configure local DVC remote
       run: |
         dvc remote add -d localremote ./dvc-cache || true
@@ -63,17 +71,14 @@ jobs:
           echo " Improvement found, committing updated pipeline metadata..."
           git config user.name github-actions
           git config user.email github-actions@github.com
-          # only commit metadata, NOT model.pkl
           git add metrics.json dvc.lock
           git commit -m "Update pipeline: MAE improved to $new_mae"
           git push
-          # push the actual model.pkl + data to DVC remote
           dvc push -r localremote
         else
           echo " No improvement, keeping old model."
         fi
 
-    # Save updated DVC cache back to GitHub cache
     - name: Save DVC cache
       uses: actions/cache@v3
       with:
