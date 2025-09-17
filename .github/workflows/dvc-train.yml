@@ -60,7 +60,7 @@ jobs:
         echo "Old MAE: $old_mae, New MAE: $new_mae"
 
         if (( $(echo "$new_mae < $old_mae" | bc -l) )); then
-          echo "✅ Improvement found, committing updated pipeline metadata..."
+          echo " Improvement found, committing updated pipeline metadata..."
           git config user.name github-actions
           git config user.email github-actions@github.com
           # only commit metadata, NOT model.pkl
@@ -70,7 +70,7 @@ jobs:
           # push the actual model.pkl + data to DVC remote
           dvc push -r localremote
         else
-          echo "❌ No improvement, keeping old model."
+          echo " No improvement, keeping old model."
         fi
 
     # Save updated DVC cache back to GitHub cache
