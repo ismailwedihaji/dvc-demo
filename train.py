@@ -19,7 +19,7 @@ X = np.arange(len(y)).reshape(-1, 1)
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, shuffle=False)
 
 
-degree = 4
+degree = 3
 poly = PolynomialFeatures(degree=degree)
 X_train_poly = poly.fit_transform(X_train)
 X_test_poly = poly.transform(X_test)
